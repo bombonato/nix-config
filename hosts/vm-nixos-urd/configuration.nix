@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   imports =
@@ -18,6 +18,11 @@
   # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ]; # Enable flakes
+  
+  # Opcional, mas recomendado: Mapeia o 'nixpkgs' do flake registry para o mesmo
+  # nixpkgs que o seu sistema está usando. Isso garante consistência ao executar
+  # comandos como `nix shell nixpkgs#vim`.
+  #nix.registry.nixpkgs.flake = config.nix.nixPath."nixpkgs/nixpkgs-25.05";
 
   networking.hostName = lib.mkDefault "nixos-urd"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -44,6 +49,10 @@
 
   # Select internationalisation properties.
   i18n.defaultLocale = "pt_BR.UTF-8";
+
+  # i18n.supportedLocales = [
+  #   "en_US.UTF-8/UTF-8"
+  # ];
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "pt_BR.UTF-8";
@@ -113,9 +122,10 @@
      isNormalUser = true;
      description = "Fa3io";
      extraGroups = [ "wheel" "networkmanager" "video" "render" ]; # Enable ‘sudo’ for the user.
-     packages = with pkgs; [
-       # tree
-     ];
+
+    # Define o shell de login padrão para este usuário
+    shell = pkgs.zsh; # ou pkgs.bash, pkgs.fish, etc.
+
      #openssh.authorizedKeys.keys = [
      #	"YOUR SSH PUBLIC KEY"
      #];
@@ -155,7 +165,7 @@
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
-     #pkgs.linuxKernel.packages.linux_latest_libre.deepin-anything-module
+     inputs.home-manager.packages.${pkgs.system}.default
      ## Basics
      vim
      wget
@@ -173,13 +183,9 @@
      
      ## Devel
      git # dev, Nix Flakes, etc
-     gh
-     code-server
-
+     
      ## Nix
      nixos-rebuild-ng
-     nixfmt-rfc-style
-     nixpkgs-fmt
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -210,7 +216,7 @@
         8080 # Web Unprivilegied
   ];
   networking.firewall.allowedUDPPorts = [ 
-	3389 # RDP
+	      3389 # RDP
   ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
