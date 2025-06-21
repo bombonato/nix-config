@@ -8,6 +8,9 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../modules/base.nix
+      ../modules/users.nix
+      ../modules/desktop.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -36,67 +39,10 @@
   # QEMU Guest Agent
   services.qemuGuest.enable = lib.mkDefault true; 
  
-  # Set your time zone.
-  time.timeZone = "America/Sao_Paulo";
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "pt_BR.UTF-8";
-
-  # i18n.supportedLocales = [
-  #   "en_US.UTF-8/UTF-8"
-  # ];
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "pt_BR.UTF-8";
-    LC_IDENTIFICATION = "pt_BR.UTF-8";
-    LC_MEASUREMENT = "pt_BR.UTF-8";
-    LC_MONETARY = "pt_BR.UTF-8";
-    LC_NAME = "pt_BR.UTF-8";
-    LC_NUMERIC = "pt_BR.UTF-8";
-    LC_PAPER = "pt_BR.UTF-8";
-    LC_TELEPHONE = "pt_BR.UTF-8";
-    LC_TIME = "pt_BR.UTF-8";
-  };
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # security.pam.services.swaylock = {
-  #  enableGnomeKeyring = true;
-  #};
-
-  #services.gnome.gnome-keyring.enable = true;
-  # this should allow gnome calculator to convert currencies
-  #services.gnome.glib-networking.enable = true;
-
-  # Enable the Deepin Desktop Environment.
-  #services.xserver.displayManager.lightdm.enable = true;
-  #services.xserver.desktopManager.deepin.enable = true;
-  # TEMP: Desabilitar deepin-anything-module devido Kernel Novo
-  #services.xserver.desktopManager.deepin.deepin-anything.enable = false;
-
-  # Configure keymap in X11
-  services.xserver.xkb.layout = "us";
-  services.xserver.xkb.variant =  "altgr-intl";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-  # services.xserver.xkb.options = "ctrl:nocaps";
-
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
-  # Enable sound.
+  ## SOUND
   #services.pulseaudio.enable = true;
   # OR
   services.pipewire = {
@@ -114,30 +60,12 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
   
-
-  nix.settings.trusted-users = [ "root" "@wheel" ]; # Allow remote updates
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.fabio = {
-     isNormalUser = true;
-     description = "Fa3io";
-     extraGroups = [ "wheel" "networkmanager" "video" "render" ]; # Enable ‘sudo’ for the user.
-
-    # Define o shell de login padrão para este usuário
-    shell = pkgs.zsh; # ou pkgs.bash, pkgs.fish, etc.
-
-     #openssh.authorizedKeys.keys = [
-     #	"YOUR SSH PUBLIC KEY"
-     #];
-  };
-
-  programs.zsh.enable = true;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   # programs.firefox.enable = true;
 
+  ## HEALTHY
   nix.settings.auto-optimise-store = true;
 
   nix.gc = {
@@ -145,24 +73,6 @@
       dates = "weekly";
       options = "--delete-older-than +3";
   };
-
-  #programs.nh = {
-  #    enable = true;
-  #    clean = {
-  #      enable = true;
-  #      # daily at 6 AM or later 
-  #      # (just so that it doesn't GC at midnight like it would with "daily")
-  #      dates = "6:00";
-  #      extraArgs = lib.strings.concatStringsSep " " [
-  #        # remove any generations older than 14 days...
-  #        "--keep-since 14d"
-  #        # ...but keep at least 7 generations, even if they are older than that.
-  #        "--keep 7"
-  #        # don't clean gc roots automatically so that direnv can cache the results
-  #        "--nogcroots"
-  #      ];
-  #    };
-  #  };
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).

@@ -1,6 +1,15 @@
-{ inputs, lib, config, pkgs, ... }:
-
+# { inputs, lib, config, pkgs, ... }:
+{ pkgs, ... }:
 {
+  imports =
+    [ # Include the results of the hardware scan.
+      ../modules/git.nix
+      ../modules/shell.nix
+      # ../modules/zsh.nix
+      # ../modules/cli.nix
+      ../modules/desktop.nix
+      ../modules/browser.nix
+    ];
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "fabio";
@@ -17,19 +26,18 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
     
     ## Devel
-    pkgs.git
-    pkgs.gh
-    pkgs.code-server
+    gh
+    code-server
 
     ## Nix
-    pkgs.nixfmt-rfc-style
-    pkgs.nixpkgs-fmt
+    nixfmt-rfc-style
+    nixpkgs-fmt
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -78,12 +86,6 @@
   #
   home.sessionVariables = {
     # EDITOR = "emacs";
-  };
-
-  programs.git = {
-    enable = true;
-    userName = "bombonato";
-    userEmail = "fabio.bombonato@gmail.com";
   };
 
   # Let Home Manager install and manage itself.
