@@ -2,7 +2,8 @@
 { pkgs, ... }:
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ../modules/git.nix
       ../modules/shell.nix
       # ../modules/zsh.nix
@@ -30,7 +31,7 @@
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
-    
+
     ## Devel
     gh
     code-server

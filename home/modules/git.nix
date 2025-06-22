@@ -1,13 +1,13 @@
 # { pkgs, ... }: {
 { ... }: {
-    programs.git = {
-        enable = true;
-        userName = "bombonato";
-        userEmail = "fabio.bombonato@gmail.com";
-        extraConfig = {
-            # Magit-forge configuration
-            github.user = "tlater";
-            gitlab.user = "tlater";
-        };
+  programs.git = {
+    enable = true;
+    userName = "bombonato";
+    userEmail = "fabio.bombonato@gmail.com";
+    extraConfig = {
+      # Magit-forge configuration
+      github.user = "tlater";
+      gitlab.user = "tlater";
     };
+  };
 }

@@ -27,7 +27,7 @@ General structure for the nixos configurationm
 nix-config/
 ├── flake.nix
 ├── home/
-│   ├── `<username>`/home.nix           # Arquivo principal que importa os outros
+│   ├── <username>/home.nix           # Arquivo principal que importa os outros
 │   └── modules/
 │       ├── cli.nix                     # Configs de apps de linha de comando (htop, fd, etc)
 │       ├── git.nix                     # Configs do Git
@@ -35,7 +35,7 @@ nix-config/
 │       ├── desktop.nix                 # Configs especificas para Desktop usuario
 │       └── browser.nix                 # Configs de browser: Chrome, Brave, etc
 └── hosts/
-    ├── `<host>`/configuration.nix      # Arquivo principal que importa os outros
+    ├── <host>/configuration.nix      # Arquivo principal que importa os outros
     └── modules/
         ├── base.nix                    # Configs base (timezone, locale, etc)
         ├── desktop.nix                 # Configs de ambiente gráfico no sistema (GNOME, KDE, Deepin, ...)

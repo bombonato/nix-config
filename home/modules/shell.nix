@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
-    
-    config.home.packages = with pkgs; [
-        ghostty
-    ];
+
+  config.home.packages = with pkgs; [
+    ghostty
+  ];
 }

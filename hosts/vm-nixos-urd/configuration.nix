@@ -6,7 +6,8 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../modules/base.nix
       ../modules/users.nix
@@ -21,7 +22,7 @@
   # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ]; # Enable flakes
-  
+
   # Opcional, mas recomendado: Mapeia o 'nixpkgs' do flake registry para o mesmo
   # nixpkgs que o seu sistema está usando. Isso garante consistência ao executar
   # comandos como `nix shell nixpkgs#vim`.
@@ -30,15 +31,15 @@
   networking.hostName = lib.mkDefault "nixos-urd"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # QEMU Guest Agent
-  services.qemuGuest.enable = lib.mkDefault true; 
- 
+  services.qemuGuest.enable = lib.mkDefault true;
+
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
@@ -46,12 +47,12 @@
   #services.pulseaudio.enable = true;
   # OR
   services.pipewire = {
-     enable = true;
-     pulse.enable = true;
-     alsa.enable = true;
-     alsa.support32Bit = true;
+    enable = true;
+    pulse.enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
   };
-  
+
   security.rtkit.enable = true;
   #security.polkit.enable = true;
   #security.sudo-rs.enable = true;
@@ -59,7 +60,7 @@
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
-  
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -69,35 +70,35 @@
   nix.settings.auto-optimise-store = true;
 
   nix.gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than +3";
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than +3";
   };
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
-     inputs.home-manager.packages.${pkgs.system}.default
-     ## Basics
-     vim
-     wget
-     openssl
-     
-     ## Hardware
-     pciutils
-     usbutils
-     
-     ## Network
-     lsof
+    inputs.home-manager.packages.${pkgs.system}.default
+    ## Basics
+    vim
+    wget
+    openssl
 
-     ## CLI
-     neofetch
-     
-     ## Devel
-     git # dev, Nix Flakes, etc
-     
-     ## Nix
-     nixos-rebuild-ng
+    ## Hardware
+    pciutils
+    usbutils
+
+    ## Network
+    lsof
+
+    ## CLI
+    neofetch
+
+    ## Devel
+    git # dev, Nix Flakes, etc
+
+    ## Nix
+    nixos-rebuild-ng
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -112,23 +113,23 @@
 
   # Enable the OpenSSH daemon.
   services.openssh = {
-	enable = true;
-	#settings.PasswordAuthentication = false;
-    	#settings.KbdInteractiveAuthentication = false;
+    enable = true;
+    #settings.PasswordAuthentication = false;
+    #settings.KbdInteractiveAuthentication = false;
   };
   #programs.ssh.startAgent = true;
 
   ## FIREWALL
   networking.firewall.allowPing = true;
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 
-  	22   # SSH
-        3389 # RDP
-        5900 # VNC
-        8080 # Web Unprivilegied
+  networking.firewall.allowedTCPPorts = [
+    22 # SSH
+    3389 # RDP
+    5900 # VNC
+    8080 # Web Unprivilegied
   ];
-  networking.firewall.allowedUDPPorts = [ 
-	      3389 # RDP
+  networking.firewall.allowedUDPPorts = [
+    3389 # RDP
   ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
