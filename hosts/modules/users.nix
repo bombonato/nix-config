@@ -1,7 +1,9 @@
 { pkgs, ... }: {
 
   ## SHELL
+  # programs.bash.enable = true;
   programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.bash;
 
   nix.settings.trusted-users = [ "root" "@wheel" ]; # Allow remote updates
 

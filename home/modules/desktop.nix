@@ -1,5 +1,10 @@
 # { pkgs, config, ... }: {
-{ ... }: {
+{ pkgs, ... }: {
+
+  home.packages = with pkgs; [
+    pkgs.nerd-fonts.fira-code
+  ];
+
   xdg = {
     enable = true;
     userDirs = {

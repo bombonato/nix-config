@@ -12,6 +12,8 @@
       ../modules/base.nix
       ../modules/users.nix
       ../modules/desktop.nix
+      # ../modules/wm-gnome.nix
+      ../modules/wm-deepin.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -83,6 +85,7 @@
     vim
     wget
     openssl
+    bash
 
     ## Hardware
     pciutils
