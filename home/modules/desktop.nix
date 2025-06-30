@@ -10,7 +10,7 @@
   xdg = {
     enable = true;
 
-    
+
     # Definiçoes de Locais padroes para as pastas
     # comuns em ambientes de Windows Managers
     userDirs = {
@@ -58,5 +58,5 @@
     #     };
     # };
   };
-  
+
 }

@@ -17,7 +17,7 @@
   services.gnome.glib-networking.enable = true;
 
   environment.systemPackages = with pkgs; [
-  #   gnome-session
+    #   gnome-session
     gnome-remote-desktop
   ];
 
@@ -27,21 +27,21 @@
 
   environment.gnome.excludePackages = with pkgs; [
     gnome-bluetooth
-    cheese       # webcam
-    epiphany     # web browser
-    #gedit       # text editor
-    #eog         # image viewer
-    totem        # video player
-    yelp         # help viewer
-    geary        # email client
-    evince       # document viewer
-    simple-scan  # document scanner
-    gnome-calendar     # calendar
-    gnome-contacts     # contacts
-    gnome-maps      # maps
-    gnome-music     # music
-    gnome-photos     # photos
-    gnome-tour       # tour app
+    cheese # webcam
+    epiphany # web browser
+    #gedit # text editor
+    #eog # image viewer
+    totem # video player
+    yelp # help viewer
+    geary # email client
+    evince # document viewer
+    simple-scan # document scanner
+    gnome-calendar # calendar
+    gnome-contacts # contacts
+    gnome-maps # maps
+    gnome-music # music
+    gnome-photos # photos
+    gnome-tour # tour app
     gnome-font-viewer #no need
     gnome-user-docs
     gnome-weather #weather app

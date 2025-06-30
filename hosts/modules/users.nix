@@ -11,7 +11,7 @@
   users.users.fabio = {
     isNormalUser = true;
     description = "Fa3io";
-    extraGroups = [ "wheel" "networkmanager" "audio" "video" "render" "input"]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "audio" "video" "render" "input" ]; # Enable ‘sudo’ for the user.
 
     # Define o shell de login padrão para este usuário
     shell = pkgs.zsh; # ou pkgs.bash, pkgs.fish, etc.
