@@ -6,8 +6,8 @@
     userEmail = "fabio.bombonato@gmail.com";
     extraConfig = {
       # Magit-forge configuration
-      github.user = "tlater";
-      gitlab.user = "tlater";
+      github.user = "bombonato";
+      gitlab.user = "fabio.bombonato";
     };
   };
 }

@@ -2,7 +2,7 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 # { config, lib, pkgs, modulesPath, ... }:
-{ lib, modulesPath, ... }:
+{ lib, pkgs, modulesPath, ... }:
 {
   imports =
     [
@@ -11,8 +11,18 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "virtio_pci" "sr_mod" "virtio_blk" ];
   boot.initrd.kernelModules = [ "amdgpu" ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [ "kvm-amd" "virtio_gpu" ];
   boot.extraModulePackages = [ ];
+  boot.kernelParams = [
+    # AMD CPU scaling
+    # https://www.kernel.org/doc/html/latest/admin-guide/pm/amd-pstate.html
+    # https://wiki.archlinux.org/title/CPU_frequency_scaling#amd_pstate
+    # On recent AMD CPUs this can be more energy efficient.
+    "amd_pstate=guided"
+
+    # Load amdgpu at stage 1
+    "amdgpu"
+  ];
 
   fileSystems."/" =
     {
@@ -58,5 +68,35 @@
     enable = true;
     interval = "weekly";
     fileSystems = [ "/" ];
+  };
+
+  ## GPU 3D
+  hardware.enableRedistributableFirmware = true;
+  services.xserver.videoDrivers = [ "modesetting" ];
+  # services.xserver.videoDrivers = [ "amdgpu" ];
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+    extraPackages = with pkgs; [
+      # ADM ROCm OpenCL runtime
+      # rocmPackages.clr
+      rocmPackages.clr.icd
+      amdvlk
+      # Habilite a aceleração de hardware para vídeo (VA-API).
+      vaapiVdpau
+      libvdpau-va-gl
+    ];
+    extraPackages32 = with pkgs; [
+      driversi686Linux.amdvlk
+    ];
+  };
+  
+  environment.variables.VDPAU_DRIVER = "va_gl";
+  systemd.tmpfiles.rules = [
+    "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
+  ];
+  hardware.amdgpu = {
+    opencl.enable = true;
+    initrd.enable = true;
   };
 }

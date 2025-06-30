@@ -12,10 +12,9 @@ in
   home.packages = with pkgs; [
     disfetch
     eza
+    tree
     direnv
     nix-direnv
-    kitty
-    alacritty
     ghostty
   ];
 
@@ -42,7 +41,9 @@ in
     # Isso nos dá acesso aos seus plugins e temas de forma declarativa
     oh-my-zsh = {
       enable = true;
-      # theme = "robbyrussell"; # Esta linha ficaria aqui se quiséssemos um tema do OMZ
+      plugins = [ "git" ];
+      # theme = "agnoster";
+      # theme = "robbyrussell";
     };
     # initExtra = ''
     # PROMPT=" ◉ %U%F{magenta}%n%f%u@%U%F{blue}%m%f%u:%F{yellow}%~%f

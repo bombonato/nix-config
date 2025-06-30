@@ -6,7 +6,6 @@
       # Include the results of the hardware scan.
       ../modules/git.nix
       ../modules/shell.nix
-      # ../modules/zsh.nix
       # ../modules/cli.nix
       ../modules/desktop.nix
       ../modules/browser.nix

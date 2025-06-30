@@ -6,19 +6,7 @@
 
   ## LOCALE
   # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
-
-  # Select internationalisation properties.
   i18n.defaultLocale = "pt_BR.UTF-8";
-
-  # i18n.supportedLocales = [
-  #   "en_US.UTF-8/UTF-8"
-  # ];
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "pt_BR.UTF-8";
@@ -31,5 +19,9 @@
     LC_TELEPHONE = "pt_BR.UTF-8";
     LC_TIME = "pt_BR.UTF-8";
   };
+
+  # Configure console keymap
+  # console.keyMap = "br-abnt2";
+  console.useXkbConfig = true;
 
 }

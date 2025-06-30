@@ -2,11 +2,17 @@
 { pkgs, ... }: {
 
   home.packages = with pkgs; [
-    pkgs.nerd-fonts.fira-code
+    nerd-fonts.fira-code
+    # deepin.dde-session # Deepin - necessários para script de conf de usuário
+    # deepin.dde-session-ui # Deepin - necessários para script de conf de usuário
   ];
 
   xdg = {
     enable = true;
+
+    
+    # Definiçoes de Locais padroes para as pastas
+    # comuns em ambientes de Windows Managers
     userDirs = {
       enable = true;
       createDirectories = false;
@@ -52,4 +58,5 @@
     #     };
     # };
   };
+  
 }

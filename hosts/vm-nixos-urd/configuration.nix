@@ -12,8 +12,8 @@
       ../modules/base.nix
       ../modules/users.nix
       ../modules/desktop.nix
-      # ../modules/wm-gnome.nix
-      ../modules/wm-deepin.nix
+      ../modules/wm-gnome.nix
+      # ../modules/wm-deepin.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -91,6 +91,20 @@
     pciutils
     usbutils
 
+    ## GPU
+    clinfo
+    nvtopPackages.amd
+    amdgpu_top
+    # mesa
+    mesa-demos
+    # Vulkan
+    vulkan-tools # vkcube --gpu_number 0
+    # ### virtio3d
+    # libglvnd
+    # libva
+    # vaapiVdpau
+    libva-utils
+
     ## Network
     lsof
 
@@ -113,6 +127,11 @@
   # };
 
   # List services that you want to enable:
+
+  ## Remote Access
+  # Spice
+  # Habilite o spice-vdagent para clipboard, resolução dinâmica, etc.
+  services.spice-vdagentd.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh = {
