@@ -2,31 +2,30 @@
   description = "F3.Nix";
 
   inputs = {
-    # STABLE
+    # Nix ecosystem
     # https://nixos.org/manual/nixpkgs/stable/
-    # branch: nixos-25.05
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-    # UNSTABLE
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
 
     ## Home Manager
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
-    # outputs = { nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs :
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:
     let
       # inherit (self) outputs;
       lib = nixpkgs.lib;
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      # OVERLAY: Add a "Layer" to unstable packages
-      unstable-overlay = final: prev: {
-        # unstable-overlay = prev: {
-        unstable = nixpkgs-unstable.legacyPackages.${prev.system};
+      # OVERLAY: Add a "Layer" to stable packages
+      stable-overlay = final: prev: {
+        stable = import nixpkgs-stable {
+          inherit system;
+          config.allowUnfree = true; 
+        };
       };
       # Supported systems
       forAllSystems = inputs.nixpkgs.lib.genAttrs [
@@ -85,7 +84,7 @@
         }
       );
 
-      # NixOS configuration entrypoints
+      # NixOS Configuration entrypoints
       nixosConfigurations = {
         ## Workstations
         # sudo nixos-rebuild switch --flake . # if configurationName == hostname
@@ -96,21 +95,21 @@
           specialArgs = { inherit system inputs; };
           modules = [
             # Apply overlay in all System
-            { nixpkgs.overlays = [ unstable-overlay ]; }
+            { nixpkgs.overlays = [ stable-overlay ]; }
             ./hosts/vm-nixos-urd/configuration.nix
             # inputs.home-manager.nixosModules.default
           ];
         };
       };
 
-      ## Home-Manager configuration
+      ## Home-Manager Configuration
       homeConfigurations = {
         "fabio" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           extraSpecialArgs = { inherit inputs; };
           modules = [
             # Apply overlay in Home Manager
-            { nixpkgs.overlays = [ unstable-overlay ]; }
+            { nixpkgs.overlays = [ stable-overlay ]; }
             ./home/fabio/home.nix
           ];
         };
