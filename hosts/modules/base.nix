@@ -1,5 +1,5 @@
 # { pkgs, ... }: {
-{ ... }: {
+_: {
   ## TIMEZONE
   # Set your time zone.
   time.timeZone = "America/Sao_Paulo";

@@ -23,36 +23,79 @@
   # Use latest kernel.
   # boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ]; # Enable flakes
+  nix = {
+    # Enable flakes
+    settings.experimental-features = [ "nix-command" "flakes" ];
+
+    ## HEALTHY
+    settings.auto-optimise-store = true;
+
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than +3";
+    };
+  };
 
   # Opcional, mas recomendado: Mapeia o 'nixpkgs' do flake registry para o mesmo
   # nixpkgs que o seu sistema está usando. Isso garante consistência ao executar
   # comandos como `nix shell nixpkgs#vim`.
   #nix.registry.nixpkgs.flake = config.nix.nixPath."nixpkgs/nixpkgs-25.05";
 
-  networking.hostName = lib.mkDefault "nixos-urd"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
+  # =========================== #
+  # ==      NETWORKING       == #
+  # =========================== #
+  networking = {
+    hostName = lib.mkDefault "nixos-urd"; # Define your hostname.
+    # wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+    networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+    # proxy.default = "http://user:password@proxy:port/";
+    # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # QEMU Guest Agent
-  services.qemuGuest.enable = lib.mkDefault true;
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
+    firewall = {
+      allowPing = true;
+      allowedTCPPorts = [
+        22 # SSH
+        3389 # RDP
+        5900 # VNC
+        8080 # Web Unprivilegied
+      ];
+      allowedUDPPorts = [
+        3389 # RDP
+      ];
+    };
+  };
 
   ## SOUND
-  #services.pulseaudio.enable = true;
-  # OR
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
+  # pulseaudio.enable = true;
+
+  services = {
+    # QEMU Guest Agent
+    qemuGuest.enable = lib.mkDefault true;
+
+    # Enable CUPS to print documents.
+    # printing.enable = true;
+
+    ## AUDIO
+    pipewire = {
+      enable = true;
+      pulse.enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+    };
+
+    ## Remote Access
+    # Spice
+    # Habilite o spice-vdagent para clipboard, resolução dinâmica, etc.
+    spice-vdagentd.enable = true;
+
+    ## SSH
+    openssh = {
+      enable = true;
+      #settings.PasswordAuthentication = false;
+      #settings.KbdInteractiveAuthentication = false;
+    };
   };
 
   security.rtkit.enable = true;
@@ -68,14 +111,7 @@
 
   # programs.firefox.enable = true;
 
-  ## HEALTHY
-  nix.settings.auto-optimise-store = true;
 
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than +3";
-  };
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
@@ -128,33 +164,7 @@
 
   # List services that you want to enable:
 
-  ## Remote Access
-  # Spice
-  # Habilite o spice-vdagent para clipboard, resolução dinâmica, etc.
-  services.spice-vdagentd.enable = true;
-
-  # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = true;
-    #settings.PasswordAuthentication = false;
-    #settings.KbdInteractiveAuthentication = false;
-  };
   #programs.ssh.startAgent = true;
-
-  ## FIREWALL
-  networking.firewall.allowPing = true;
-  # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [
-    22 # SSH
-    3389 # RDP
-    5900 # VNC
-    8080 # Web Unprivilegied
-  ];
-  networking.firewall.allowedUDPPorts = [
-    3389 # RDP
-  ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

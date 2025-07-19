@@ -1,12 +1,16 @@
-{ pkgs, ... }: {
-  # { ... }: {
+# { pkgs, ... }: {
+_: {
   ## CORE
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  services = {
+    xserver = {
+      # Enable the X11 windowing system.
+      enable = true;
+      # Configure keymap in X11
+      xkb.layout = "us";
+      xkb.variant = "altgr-intl";
+    };
+  };
 
-  # Configure keymap in X11
-  services.xserver.xkb.layout = "us";
-  services.xserver.xkb.variant = "altgr-intl";
 
   ## Remote Access
   # Sunshine

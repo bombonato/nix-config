@@ -9,48 +9,52 @@
       (modulesPath + "/profiles/qemu-guest.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "virtio_pci" "sr_mod" "virtio_blk" ];
-  boot.initrd.kernelModules = [ "amdgpu" ];
-  boot.kernelModules = [ "kvm-amd" "virtio_gpu" ];
-  boot.extraModulePackages = [ ];
-  boot.kernelParams = [
-    # AMD CPU scaling
-    # https://www.kernel.org/doc/html/latest/admin-guide/pm/amd-pstate.html
-    # https://wiki.archlinux.org/title/CPU_frequency_scaling#amd_pstate
-    # On recent AMD CPUs this can be more energy efficient.
-    "amd_pstate=guided"
+  boot = {
+    initrd.availableKernelModules = [ "xhci_pci" "ahci" "virtio_pci" "sr_mod" "virtio_blk" ];
+    initrd.kernelModules = [ "amdgpu" ];
+    kernelModules = [ "kvm-amd" "virtio_gpu" ];
+    extraModulePackages = [ ];
+    kernelParams = [
+      # AMD CPU scaling
+      # https://www.kernel.org/doc/html/latest/admin-guide/pm/amd-pstate.html
+      # https://wiki.archlinux.org/title/CPU_frequency_scaling#amd_pstate
+      # On recent AMD CPUs this can be more energy efficient.
+      "amd_pstate=guided"
 
-    # Load amdgpu at stage 1
-    "amdgpu"
-  ];
+      # Load amdgpu at stage 1
+      "amdgpu"
+    ];
+  };
 
-  fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/e1561878-a923-4db9-b920-86952f63640b";
-      fsType = "btrfs";
-      options = [ "compress=zstd" "subvol=@root" ];
-    };
+  fileSystems = {
+    "/" =
+      {
+        device = "/dev/disk/by-uuid/e1561878-a923-4db9-b920-86952f63640b";
+        fsType = "btrfs";
+        options = [ "compress=zstd" "subvol=@root" ];
+      };
 
-  fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/C9D0-F306";
-      fsType = "vfat";
-      options = [ "umask=0077" ];
-    };
+    "/boot" =
+      {
+        device = "/dev/disk/by-uuid/C9D0-F306";
+        fsType = "vfat";
+        options = [ "umask=0077" ];
+      };
 
-  fileSystems."/home" =
-    {
-      device = "/dev/disk/by-uuid/e1561878-a923-4db9-b920-86952f63640b";
-      fsType = "btrfs";
-      options = [ "compress=zstd" "subvol=@home" ];
-    };
+    "/home" =
+      {
+        device = "/dev/disk/by-uuid/e1561878-a923-4db9-b920-86952f63640b";
+        fsType = "btrfs";
+        options = [ "compress=zstd" "subvol=@home" ];
+      };
 
-  fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-uuid/e1561878-a923-4db9-b920-86952f63640b";
-      fsType = "btrfs";
-      options = [ "compress=zstd" "noatime" "subvol=@nix" ];
-    };
+    "/nix" =
+      {
+        device = "/dev/disk/by-uuid/e1561878-a923-4db9-b920-86952f63640b";
+        fsType = "btrfs";
+        options = [ "compress=zstd" "noatime" "subvol=@nix" ];
+      };
+  };
 
   swapDevices =
     [{ device = "/dev/disk/by-uuid/de184764-4926-457e-b8da-72fe6376909f"; }];
@@ -71,32 +75,34 @@
   };
 
   ## GPU 3D
-  hardware.enableRedistributableFirmware = true;
   services.xserver.videoDrivers = [ "modesetting" ];
   # services.xserver.videoDrivers = [ "amdgpu" ];
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [
-      # ADM ROCm OpenCL runtime
-      # rocmPackages.clr
-      rocmPackages.clr.icd
-      amdvlk
-      # Habilite a aceleração de hardware para vídeo (VA-API).
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
-    extraPackages32 = with pkgs; [
-      driversi686Linux.amdvlk
-    ];
+  hardware = {
+    enableRedistributableFirmware = true;
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+      extraPackages = with pkgs; [
+        # ADM ROCm OpenCL runtime
+        # rocmPackages.clr
+        rocmPackages.clr.icd
+        amdvlk
+        # Habilite a aceleração de hardware para vídeo (VA-API).
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+      extraPackages32 = with pkgs; [
+        driversi686Linux.amdvlk
+      ];
+    };
+    amdgpu = {
+      opencl.enable = true;
+      initrd.enable = true;
+    };
   };
 
   environment.variables.VDPAU_DRIVER = "va_gl";
   systemd.tmpfiles.rules = [
     "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
-  hardware.amdgpu = {
-    opencl.enable = true;
-    initrd.enable = true;
-  };
 }

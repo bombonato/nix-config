@@ -2,7 +2,7 @@
 { config, pkgs, ... }: {
 
   config.home.packages = with pkgs; [
-    brave
+    stable.brave
   ];
 
   # nixpkgs.config.chromium.commandLineArgs = "--gtk-version=4";

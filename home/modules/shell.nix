@@ -19,53 +19,58 @@ in
   ];
 
   ## Dir
-  programs.direnv.enable = true;
-  programs.direnv.enableZshIntegration = true;
-  programs.direnv.nix-direnv.enable = true;
-
-  ## ZSH
-  programs.zsh = {
-    enable = true;
-    # Local recomendado para os arquivos do zsh
-    dotDir = ".config/zsh";
-    shellAliases = myAliases;
-
-    # Plugins
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    enableCompletion = true;
-
-    # Muda para um diretório se você digitar o nome dele
-    autocd = true;
-    # Habilita a integração com o Oh My Zsh (sem instalar o OMZ por completo)
-    # Isso nos dá acesso aos seus plugins e temas de forma declarativa
-    oh-my-zsh = {
+  programs = { 
+    ## DirEnv
+    direnv = {
       enable = true;
-      plugins = [ "git" ];
-      # theme = "agnoster";
-      # theme = "robbyrussell";
+      enableZshIntegration = true;
+      nix-direnv.enable = true;
     };
-    # initExtra = ''
-    # PROMPT=" ◉ %U%F{magenta}%n%f%u@%U%F{blue}%m%f%u:%F{yellow}%~%f
-    #  %F{green}→%f "
-    # RPROMPT="%F{red}▂%f%F{yellow}▄%f%F{green}▆%f%F{cyan}█%f%F{blue}▆%f%F{magenta}▄%f%F{white}▂%f"
-    # [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
-    # bindkey '^P' history-beginning-search-backward
-    # bindkey '^N' history-beginning-search-forward
-    # '';
-    # Histórico
-    history = {
-      size = 10000;
-      path = "${config.xdg.dataHome}/zsh/history";
-      ignoreDups = true;
-      share = true;
-    };
-  };
 
-  ## STARSHIP
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
+    ## ZSH
+    zsh = {
+      enable = true;
+      # Local recomendado para os arquivos do zsh
+      dotDir = ".config/zsh";
+      shellAliases = myAliases;
+
+      # Plugins
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
+      enableCompletion = true;
+
+      # Muda para um diretório se você digitar o nome dele
+      autocd = true;
+      # Habilita a integração com o Oh My Zsh (sem instalar o OMZ por completo)
+      # Isso nos dá acesso aos seus plugins e temas de forma declarativa
+      oh-my-zsh = {
+        enable = true;
+        plugins = [ "git" ];
+        # theme = "agnoster";
+        # theme = "robbyrussell";
+      };
+      # initExtra = ''
+      # PROMPT=" ◉ %U%F{magenta}%n%f%u@%U%F{blue}%m%f%u:%F{yellow}%~%f
+      #  %F{green}→%f "
+      # RPROMPT="%F{red}▂%f%F{yellow}▄%f%F{green}▆%f%F{cyan}█%f%F{blue}▆%f%F{magenta}▄%f%F{white}▂%f"
+      # [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
+      # bindkey '^P' history-beginning-search-backward
+      # bindkey '^N' history-beginning-search-forward
+      # '';
+      # Histórico
+      history = {
+        size = 10000;
+        path = "${config.xdg.dataHome}/zsh/history";
+        ignoreDups = true;
+        share = true;
+      };
+    };
+
+    ## STARSHIP
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
+    };
   };
 
   xdg.configFile."starship.toml" = {

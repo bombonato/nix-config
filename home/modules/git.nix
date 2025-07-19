@@ -1,5 +1,5 @@
 # { pkgs, ... }: {
-{ ... }: {
+_: {
   programs.git = {
     enable = true;
     userName = "bombonato";

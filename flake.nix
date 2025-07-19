@@ -14,19 +14,32 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:
+  outputs = { nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:
     let
       # inherit (self) outputs;
-      lib = nixpkgs.lib;
+      inherit (nixpkgs) lib;
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       # OVERLAY: Add a "Layer" to stable packages
-      stable-overlay = final: prev: {
+      # stable-overlay = {
+      #   stable = import nixpkgs-stable {
+      #     inherit system;
+      #     config.allowUnfree = true; 
+      #   };
+      # };
+
+      # Stable NixPkgs Overlay
+      stable-overlay = _: prev: {
         stable = import nixpkgs-stable {
-          inherit system;
-          config.allowUnfree = true; 
+          # Garante que o conjunto de pacotes 'stable' seja construído
+          # para o mesmo sistema que o conjunto 'unstable' principal.
+          inherit (prev) system;
+          # Permite que pacotes não-livres do canal stable também
+          # sejam acessados através de `pkgs.stable.unfree`.
+          config.allowUnfree = true;
         };
       };
+
       # Supported systems
       forAllSystems = inputs.nixpkgs.lib.genAttrs [
         "aarch64-linux"
@@ -105,7 +118,8 @@
       ## Home-Manager Configuration
       homeConfigurations = {
         "fabio" = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+          # inherit pkgs;
+          pkgs = nixpkgs.legacyPackages.${system};
           extraSpecialArgs = { inherit inputs; };
           modules = [
             # Apply overlay in Home Manager
