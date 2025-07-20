@@ -21,13 +21,6 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       # OVERLAY: Add a "Layer" to stable packages
-      # stable-overlay = {
-      #   stable = import nixpkgs-stable {
-      #     inherit system;
-      #     config.allowUnfree = true; 
-      #   };
-      # };
-
       # Stable NixPkgs Overlay
       stable-overlay = _: prev: {
         stable = import nixpkgs-stable {

@@ -3,6 +3,7 @@ let
   # My shell aliases
   myAliases = {
     ls = "eza --icons -l -T -L=1";
+    la = "eza --icons -l -T -L=1 --git -a";
     fetch = "disfetch";
     nrs = "sudo nixos-rebuild switch --flake ~/nix-config";
     hms = "home-manager switch --flake ~/nix-config";
@@ -19,7 +20,7 @@ in
   ];
 
   ## Dir
-  programs = { 
+  programs = {
     ## DirEnv
     direnv = {
       enable = true;
@@ -71,6 +72,26 @@ in
       enable = true;
       enableZshIntegration = true;
     };
+
+    ## EZA (ls replacement)
+    eza = {
+      enable = true;
+      # enableFishIntegration = true;
+      # enableBashIntegration = true;
+      enableZshIntegration = true;
+      # extraOptions = ["-l" "--icons" "--git" "-a"];
+    };
+
+    ## ZOXIDE (better cd)
+    ## - z => go to most access direcotory
+    ## - z ~ => go to home
+    ## - z + <name> => go to directory that best match name
+    zoxide = {
+      enable = true;
+      enableFishIntegration = true;
+    };
+
+
   };
 
   xdg.configFile."starship.toml" = {

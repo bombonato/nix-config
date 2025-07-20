@@ -12,8 +12,6 @@
       ../modules/base.nix
       ../modules/users.nix
       ../modules/desktop.nix
-      ../modules/wm-gnome.nix
-      # ../modules/wm-deepin.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -70,6 +68,9 @@
   ## SOUND
   # pulseaudio.enable = true;
 
+  # ========================= #
+  # ==      SERVICES       == #
+  # ========================= #
   services = {
     # QEMU Guest Agent
     qemuGuest.enable = lib.mkDefault true;
@@ -111,8 +112,16 @@
 
   # programs.firefox.enable = true;
 
+  # ======================== #
+  # ==      DESKTOP       == #
+  # ======================== #
+  # Custom, options in hosts/modules/desktop.nix 
+  desktop.environment = "gnome";
 
-
+  # ======================== #
+  # ==      SYSTEM        == #
+  # ==     PACKAGES       == #
+  # ======================== #
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
@@ -145,6 +154,7 @@
     lsof
 
     ## CLI
+    btop
     neofetch
 
     ## Devel

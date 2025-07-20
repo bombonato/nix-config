@@ -1,4 +1,3 @@
-# { config, pkgs, ... }: {
 { pkgs, ... }: {
   ## GNOME
   # Enable the GNOME Desktop Environment.

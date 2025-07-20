@@ -1,8 +1,4 @@
-# { config, pkgs, ... }: {
 _: {
-
-
-
   ## DEEPIN
   # Enable the Deepin Desktop Environment.
   services = {
