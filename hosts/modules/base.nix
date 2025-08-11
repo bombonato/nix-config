@@ -1,4 +1,3 @@
-# { pkgs, ... }: {
 _: {
   ## TIMEZONE
   # Set your time zone.

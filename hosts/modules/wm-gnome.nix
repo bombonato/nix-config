@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   ## GNOME
   # Enable the GNOME Desktop Environment.
   ## Stable channel
@@ -29,7 +30,7 @@
   # };
 
   environment.systemPackages = with pkgs; [
-    #   gnome-session
+    # gnome-session
     gnome-remote-desktop
   ];
 
@@ -52,8 +53,8 @@
     gnome-music # music
     gnome-photos # photos
     gnome-tour # tour app
-    gnome-font-viewer #no need
+    gnome-font-viewer # no need
     gnome-user-docs
-    gnome-weather #weather app
+    gnome-weather # weather app
   ];
 }

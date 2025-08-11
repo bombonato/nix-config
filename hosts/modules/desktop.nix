@@ -1,7 +1,17 @@
-{ config, lib, pkgs, ... }: {
+{ config
+, lib
+, pkgs
+, ...
+}:
+{
+  ### MODULE CONTRACT ###
   ## Desktop Choice Personalization (custom)
-  options.desktop.environment = lib.mkOption {
-    type = lib.types.enum [ "gnome" "deepin" "none" ]; # <== Avaliable Options
+  options.my-host.desktop.environment = lib.mkOption {
+    type = lib.types.enum [
+      "gnome"
+      "deepin"
+      "none"
+    ]; # <== Avaliable desktop Options to use
     default = "gnome";
     description = "Desktop Enviroment to activate";
   };
@@ -9,14 +19,13 @@
   # Conditional import the correct module to desktop variable choice (custom)
   imports = [
     # sintax: (import ./file) { args }
-    (lib.mkIf (config.desktop.environment == "gnome") (
+    (lib.mkIf (config.my-host.desktop.environment == "gnome") (
       (import ./wm-gnome.nix) { inherit pkgs; }
     ))
-    (lib.mkIf (config.desktop.environment == "deepin") (
-      (import ./wm-deepin.nix) { }
-    ))
+    (lib.mkIf (config.my-host.desktop.environment == "deepin") ((import ./wm-deepin.nix) { }))
   ];
 
+  ### MODULE CONFIG ###
   config = {
 
     ## CORE
@@ -32,12 +41,12 @@
 
     ## Remote Access
 
-    # Sunshine
-    # Habilita o servidor de streaming Sunshine
+    ## Sunshine
+    # Enable streaming Sunshine service
     # services.sunshine.enable = true;
     # services.sunshine.openFirewall = true;
 
-    # # Permite que o Sunshine acesse os inputs, necessário para controle remoto
+    ## Allows Sunshine to access the inputs, required for remote control.
     # hardware.uinput.enable = true;
   };
 }

@@ -1,9 +1,14 @@
-{ config, pkgs, ... }:
+{ config
+, pkgs
+, lib
+, ...
+}:
 let
   # My shell aliases
   myAliases = {
     ls = "eza --icons -l -T -L=1";
     la = "eza --icons -l -T -L=1 --git -a";
+    du = "dust";
     fetch = "disfetch";
     nrs = "sudo nixos-rebuild switch --flake ~/nix-config";
     hms = "home-manager switch --flake ~/nix-config";
@@ -11,12 +16,14 @@ let
 in
 {
   home.packages = with pkgs; [
-    disfetch
-    eza
-    tree
+    neofetch # fancier system info than pfetch and disfetch
+    eza # ls replacement
+    tree # cli dir tree viewer
+    fzf # fuzzy search
+    ncdu # TUI disk usage
+    dust # disk usage
     direnv
     nix-direnv
-    ghostty
   ];
 
   ## Dir
@@ -31,8 +38,8 @@ in
     ## ZSH
     zsh = {
       enable = true;
-      # Local recomendado para os arquivos do zsh
-      dotDir = ".config/zsh";
+      # Recommended location for zsh files
+      dotDir = "${config.home.homeDirectory}/zsh";
       shellAliases = myAliases;
 
       # Plugins
@@ -40,10 +47,10 @@ in
       syntaxHighlighting.enable = true;
       enableCompletion = true;
 
-      # Muda para um diretório se você digitar o nome dele
+      # Changes to a directory if you type its name
       autocd = true;
-      # Habilita a integração com o Oh My Zsh (sem instalar o OMZ por completo)
-      # Isso nos dá acesso aos seus plugins e temas de forma declarativa
+      # Enables integration with Oh My Zsh (without installing OMZ fully).
+      # This gives us declarative access to its plugins and themes.
       oh-my-zsh = {
         enable = true;
         plugins = [ "git" ];
@@ -91,11 +98,20 @@ in
       enableFishIntegration = true;
     };
 
-
+    ## BTop (better htop)
+    btop = {
+      enable = true;
+      settings = {
+        color_theme = lib.mkForce "gruvbox_dark";
+        round_corners = true;
+        theme_background = true;
+        vim_keys = true;
+      };
+    };
   };
 
   xdg.configFile."starship.toml" = {
-    # source = ./path/para/seu/starship.toml; # Se preferir um arquivo separado
+    # source = ./path/para/seu/starship.toml; # If you prefer a separate file
     text = ''
       # Usa um preset de prompt com ícones e cores
       # Você pode encontrar outros em: https://starship.rs/presets/

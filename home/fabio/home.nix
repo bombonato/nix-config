@@ -1,15 +1,33 @@
-# { inputs, lib, config, pkgs, ... }:
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ../modules/git.nix
-      ../modules/shell.nix
-      # ../modules/cli.nix
-      ../modules/desktop.nix
-      ../modules/browser.nix
-    ];
+  imports = [
+    ../modules/sops.nix
+    ../modules/ssh.nix
+    ../modules/git.nix
+    ../modules/shell.nix
+    ../modules/desktop.nix
+    ../modules/browser.nix
+  ];
+
+  ### user-specific definitions for modules contract
+  ### namespace: my-user
+  my-user.ssh.github = {
+    enable = true;
+    identityFileName = "id_ed25519_github";
+  };
+
+  # Secrets destination
+  sops.secrets = {
+    "keys/ssh/github" = {
+      path = "${config.home.homeDirectory}/.ssh/${config.my-user.ssh.github.identityFileName}";
+      mode = "0600";
+    };
+    "keys/ssh/githubPub" = {
+      path = "${config.home.homeDirectory}/.ssh/${config.my-user.ssh.github.identityFileName}.pub";
+      mode = "0640";
+    };
+  };
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home = {
@@ -31,6 +49,13 @@
       ## Devel
       gh
       code-server
+
+      ## AI
+      gemini-cli
+
+      ## Security
+      sops
+      age
 
       ## Nix
       nixfmt-rfc-style
@@ -79,10 +104,14 @@
     #
     # or
     #
-    #  /etc/profiles/per-user/fabio/etc/profile.d/hm-session-vars.sh
+    #  /etc/profiles/per-user/myusername/etc/profile.d/hm-session-vars.sh
     #
     sessionVariables = {
-      # EDITOR = "emacs";
+      SHELL = "zsh";
+      # TERMINAL = "";
+      # VISUAL = "nvim";
+      EDITOR = "vim";
+      SOPS_EDITOR = "vim";
     };
   };
 

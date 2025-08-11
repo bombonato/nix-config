@@ -1,13 +1,16 @@
-{ pkgs, inputs, config, lib, ... }:
-let
-  inherit (config.home) homeDirectory;
-in
+{ pkgs
+, inputs
+, config
+, lib
+, ...
+}:
 {
   imports = [
     inputs.sops-nix.nixosModules.sops
   ];
 
-  ## Define Contract Requirements for this module
+  ### MODULE CONTRACT ###
+  ## Contract definitions required for this module
   ## namespace: my-host
   options.my-host.user = {
     enable = lib.mkOption {
@@ -20,13 +23,14 @@ in
       description = "Your user name to initial host config";
       example = "joedoe";
     };
-    nicknName = lib.mkOption {
+    nickName = lib.mkOption {
       type = lib.types.str;
       description = "Your nick name description to the user";
       example = "Darth Vader";
     };
     initialHashedPassword = lib.mkOption {
       type = lib.types.str;
+      default = null;
       description = "initial and generic user password hash for host config (mkpasswd)";
       example = "GY6I2QXe/sR ... BfZTr.";
     };
@@ -38,58 +42,44 @@ in
     };
   };
 
+  ### MODULE CONFIG ###
+  config = lib.mkIf config.my-host.user.enable {
 
-  ## SHELL
-  # programs.bash.enable = true;
-  programs.zsh.enable = true;
-  users.defaultUserShell = pkgs.bash;
+    ## SHELL
+    # programs.bash.enable = true;
+    programs.zsh.enable = true;
+    users.defaultUserShell = pkgs.bash;
 
-  nix.settings.trusted-users = [ "root" "@wheel" ]; # Allow remote updates
+    nix.settings.trusted-users = [
+      "root"
+      "@wheel"
+      config.my-host.user.name
+    ]; # Allow remote updates
 
-  # sops.secrets = {
-  #   initialHashedPassword = {
-  #     neededForUsers = true; # decrypt the secret to /run/secrets-for-users/, so it can be used to create the user
-  #     owner = config.users.users.fabio.name;
-  #     inherit (config.users.users.fabio) group;
-  #   };
-  #   # "nixos/nixos-urd/users/fabio/hashedPassword" = {
-  #   #   neededForUsers = true; # decrypt the secret to /run/secrets-for-users/, so it can be used to create the user
-  #   #   owner = config.users.users.fabio.name;
-  #   #   inherit (config.users.users.fabio) group;
-  #   # };
-  # };
-  users = {
-    # mutableUsers = false; # required for pwd to be set via sops during system activation
+    users = {
+      # mutableUsers = false; # required for pwd to be set via sops during system activation
 
-    # Define a user account. Don't forget to set a password with ‘passwd’.
-    # users.fabio = {
-    users.config.my-host.user.name = {
-      # initialHashedPassword = "cat ${config.sops.secrets.initialHashedPassword.path}";
-      initialHashedPassword = config.my-host.user.initialHashedPassword;
-      # hashedPasswordFile = config.sops.secrets."users/fabio/hashedPassword".path;
-      isNormalUser = true;
-      # description = inputs.my-secrets.user.nickName;
-      description = config.my-host.user.nickName;
-      extraGroups = [
-        "wheel"
-        "networkmanager"
-        "audio"
-        "video"
-        "render"
-        "input"
-        "plugdev"
-      ]; # Enable ‘sudo’ for the user.
+      # Define a user account. Don't forget to set a password with ‘passwd’.
+      users.${config.my-host.user.name} = {
+        # populate initialHashedPassword Options from user.nix module
+        inherit (config.my-host.user) initialHashedPassword;
+        isNormalUser = true;
+        description = config.my-host.user.nickName;
+        extraGroups = [
+          "wheel"
+          "networkmanager"
+          "audio"
+          "video"
+          "render"
+          "input"
+          "plugdev"
+        ]; # Enable ‘sudo’ for the user.
 
-      # Define o shell de login padrão para este usuário
-      shell = pkgs.zsh; # ou pkgs.bash, pkgs.fish, etc.
+        # Define o shell de login padrão para este usuário
+        shell = pkgs.zsh; # or pkgs.bash, pkgs.fish, etc.
 
-      # openssh.authorizedKeys.keys = [
-      #   # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrfZGmKcc2xRLXsHuRd0uDgKysPW9JmsoVmBYFoFVVk"
-      #   ${config.my-host.user.authorizedKeys};
-      # ];
-      authorizedKeys.keys = [
-        (${config.my-host.user.authorizedKeys} or [ ])
-      ];
+        openssh.authorizedKeys.keys = config.my-host.user.sshAuthorizedKeys;
+      };
     };
   };
 }

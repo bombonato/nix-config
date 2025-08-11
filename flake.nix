@@ -12,11 +12,32 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    ## sops-nix
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    ## (sops) My Secrets Configuration
+    my-secrets = {
+      # `shallow=1` argument in the url ensures that only the most recent revision of the target repository is downloaded.
+      url = "git+ssh://git@github.com/bombonato/my-secrets.git?shallow=1";
+      ## To access direct the filesystem (good to test and debug before commit secrets)
+      # url = "path:/home/myusername/my-secrets";
+      # Ensures that this Flake does not have its own inputs to evaluate
+      # flake = false;
+      inputs = { };
+    };
   };
 
-  outputs = { nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:
+  outputs =
+    { nixpkgs
+    , nixpkgs-stable
+    , home-manager
+    , ...
+    }@inputs:
     let
-      # inherit (self) outputs;
       inherit (nixpkgs) lib;
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
@@ -24,11 +45,11 @@
       # Stable NixPkgs Overlay
       stable-overlay = _: prev: {
         stable = import nixpkgs-stable {
-          # Garante que o conjunto de pacotes 'stable' seja construído
-          # para o mesmo sistema que o conjunto 'unstable' principal.
+          # Ensures that the 'stable' package set is built for the
+          # same system as the main 'unstable' package set.
           inherit (prev) system;
-          # Permite que pacotes não-livres do canal stable também
-          # sejam acessados através de `pkgs.stable.unfree`.
+          # Allows non-free packages from the stable channel to
+          # also be accessed via `pkgs.stable.unfree`.
           config.allowUnfree = true;
         };
       };
@@ -44,7 +65,7 @@
     in
     {
       # Formatting style using official Nix formatter
-      # Run with: nix fmt
+      # Run with: nix fmt Or nixpkgs-fmt .
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
 
       # Flake checks
@@ -102,7 +123,10 @@
           modules = [
             # Apply overlay in all System
             { nixpkgs.overlays = [ stable-overlay ]; }
+
+            # Main host configuration
             ./hosts/vm-nixos-urd/configuration.nix
+
             # inputs.home-manager.nixosModules.default
           ];
         };
@@ -122,5 +146,4 @@
         };
       };
     };
-
 }

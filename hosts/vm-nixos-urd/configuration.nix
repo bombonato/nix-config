@@ -2,17 +2,41 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, inputs, ... }:
-
+{ config
+, lib
+, pkgs
+, inputs
+, ...
+}:
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ../modules/base.nix
-      ../modules/users.nix
-      ../modules/desktop.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ../modules/base.nix
+    ../modules/sops.nix
+    ../modules/user.nix
+    ../modules/desktop.nix
+  ];
+
+  ### host-specific definitions for modules contract
+  ### namespace: my-host
+  my-host = {
+    sops = {
+      enable = true;
+      defaultSopsFile = "${inputs.my-secrets}/secrets/hosts/nixos-urd.yaml";
+    };
+    user = {
+      enable = true;
+      # populate `name` and `nickName` Options from user.nix module
+      inherit (inputs.my-secrets.user) name nickName;
+      initialHashedPassword = "cat ${config.sops.secrets."password/initialHashedPassword".path}";
+      sshAuthorizedKeys = [
+        inputs.my-secrets.ssh.pubkey1
+      ];
+    };
+    # Desktop custom options in hosts/modules/desktop.nix
+    desktop.environment = "gnome";
+  };
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -23,7 +47,10 @@
 
   nix = {
     # Enable flakes
-    settings.experimental-features = [ "nix-command" "flakes" ];
+    settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
     ## HEALTHY
     settings.auto-optimise-store = true;
@@ -31,14 +58,14 @@
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than +3";
+      options = " - -delete-older-than + 3 ";
     };
   };
 
-  # Opcional, mas recomendado: Mapeia o 'nixpkgs' do flake registry para o mesmo
-  # nixpkgs que o seu sistema está usando. Isso garante consistência ao executar
-  # comandos como `nix shell nixpkgs#vim`.
-  #nix.registry.nixpkgs.flake = config.nix.nixPath."nixpkgs/nixpkgs-25.05";
+  # Optional but recommended: Maps the flake registry's 'nixpkgs' to the same
+  # nixpkgs your system is using. This ensures consistency when running commands
+  # like nix shell nixpkgs#vim.
+  #nix.registry.nixpkgs.flake = config.nix.nixPath." nixpkgs/nixpkgs-25.05 ";
 
   # =========================== #
   # ==      NETWORKING       == #
@@ -48,8 +75,8 @@
     # wireless.enable = true;  # Enables wireless support via wpa_supplicant.
     networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-    # proxy.default = "http://user:password@proxy:port/";
-    # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+    # proxy.default = " http://user:password@proxy:port/ ";
+    # proxy.noProxy = " 127.0 .0 .1,localhost,internal.domain";
 
     firewall = {
       allowPing = true;
@@ -88,7 +115,7 @@
 
     ## Remote Access
     # Spice
-    # Habilite o spice-vdagent para clipboard, resolução dinâmica, etc.
+    # Enable the spice-vdagent for clipboard, dynamic resolution etc.
     spice-vdagentd.enable = true;
 
     ## SSH
@@ -111,12 +138,6 @@
   nixpkgs.config.allowUnfree = true;
 
   # programs.firefox.enable = true;
-
-  # ======================== #
-  # ==      DESKTOP       == #
-  # ======================== #
-  # Custom, options in hosts/modules/desktop.nix 
-  desktop.environment = "gnome";
 
   # ======================== #
   # ==      SYSTEM        == #
@@ -153,9 +174,15 @@
     ## Network
     lsof
 
+    ## Security
+    sops
+    age
+    gnupg
+    ssh-to-age
+
     ## CLI
-    btop
-    neofetch
+    htop
+    disfetch # minimal system info
 
     ## Devel
     git # dev, Nix Flakes, etc
@@ -174,7 +201,7 @@
 
   # List services that you want to enable:
 
-  #programs.ssh.startAgent = true;
+  # programs.ssh.startAgent = true;
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
@@ -199,6 +226,4 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.05"; # Did you read the comment?
-
 }
-

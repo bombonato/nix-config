@@ -1,18 +1,18 @@
 # { pkgs, config, ... }: {
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
 
   home.packages = with pkgs; [
     nerd-fonts.fira-code
-    # deepin.dde-session # Deepin - necessários para script de conf de usuário
-    # deepin.dde-session-ui # Deepin - necessários para script de conf de usuário
+
+    ghostty # terminal
   ];
 
   xdg = {
     enable = true;
 
-
-    # Definiçoes de Locais padroes para as pastas
-    # comuns em ambientes de Windows Managers
+    # Definitions of standard locations for 
+    # common folders in Windows environments
     userDirs = {
       enable = true;
       createDirectories = false;
