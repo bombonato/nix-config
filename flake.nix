@@ -22,7 +22,7 @@
     ## (sops) My Secrets Configuration
     my-secrets = {
       # `shallow=1` argument in the url ensures that only the most recent revision of the target repository is downloaded.
-      url = "git+ssh://git@github.com/bombonato/my-secrets.git?shallow=1";
+      url = "git+ssh://git@github.com/bombonato/my-secrets.git";
       ## To access direct the filesystem (good to test and debug before commit secrets)
       # url = "path:/home/myusername/my-secrets";
       # Ensures that this Flake does not have its own inputs to evaluate
